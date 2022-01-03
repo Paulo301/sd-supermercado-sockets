@@ -1,0 +1,20 @@
+{
+  "name": "sd-supermercado-sockets",
+  "version": "1.0.0",
+  "main": "server.js",
+  "repository": "git@github.com:Paulo301/sd-supermercado-sockets.git",
+  "author": "Paulo301 <paulovictor1918@gmail.com>",
+  "license": "MIT",
+  "scripts": {
+    "start": "nodemon server.js",
+    "client": "node client.js"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.15"
+  },
+  "dependencies": {
+    "dotenv": "^10.0.0",
+    "net": "^1.0.2",
+    "readline": "^1.3.0"
+  }
+}
