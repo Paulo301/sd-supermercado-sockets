@@ -42,7 +42,7 @@ let pedidos = [];
 const server = net.createServer(connectionListener);
 
 server.listen(NUM_PORTA, "0.0.0.0", () => {
-    console.log(`Servidor iniciado! Escutando na porta ${NUM_PORTA}`);
+  console.log(`Servidor iniciado! Escutando na porta ${NUM_PORTA}`);
 });
 
 function connectionListener(socket) {
@@ -65,14 +65,14 @@ function connectionListener(socket) {
         break;
 
       case "Adicionar_Carrinho":
-        const tempProduto = bdProdutos.find((produto) => produto.id.toString() === params[1]);
+        const tempProduto = bdProdutos.find((produto) => produto.id === Number(params[1]));
         if(tempProduto){
           const tam = carrinho.length;
           carrinho.push(
             {
               idCarrinho: tam ? carrinho[tam - 1].idCarrinho + 1 : 0,
               produto: tempProduto,
-              quantidade: params[2]
+              quantidade: Number(params[2])
             }
           )
           socket.write("Produto adicionado com sucesso!\n");
@@ -82,9 +82,9 @@ function connectionListener(socket) {
         break;
 
       case "Remover_Carrinho":
-        const tempProduto = carrinho.find((produto) => produto.idCarrinho.toString() === params[1]);
-        if(tempProduto){
-          const tempCarrinho = carrinho.filter((produto) => produto.idCarrinho.toString() !== params[1]);
+        const tempProduto2 = carrinho.find((produto) => produto.idCarrinho === Number(params[1]));
+        if(tempProduto2){
+          const tempCarrinho = carrinho.filter((produto) => produto.idCarrinho !== Number(params[1]));
           carrinho = tempCarrinho;
           socket.write("Produto removido com sucesso\n");
         } else {
@@ -93,21 +93,25 @@ function connectionListener(socket) {
         break;
 
       case "Listar_Carrinho":
-        let result = "";
+        let result2 = "";
         let total = 0;
 
         carrinho.forEach((produto) => {
-          result += 
+          result2 += 
             `IdCarrinho: ${produto.idCarrinho} \n`+
-            `Produto: \n${`>>id: ${produto.produto.id} \n>>nome: ${produto.produto.nome} \n>>preço: ${produto.produto.preco}\n`} \n`+
+            `Produto: \n${`>>id: ${produto.produto.id} \n>>nome: ${produto.produto.nome} \n>>preço: ${produto.produto.preco}\n`}`+
             `Quantidade: ${produto.quantidade}\n\n`
           ;
           total += produto.produto.preco*produto.quantidade;
         });
 
-        result += `Total: ${total} \n`;
+        result2 += `Total: ${total} \n`;
 
-        socket.write(result);
+        if(carrinho.length === 0){
+          result2 = "Carrinho vazio\n"
+        }
+
+        socket.write(result2);
         break;
 
       case "Pagar":
@@ -122,20 +126,19 @@ function connectionListener(socket) {
               }),
               status: "Pago"
             }
-          )
+          );
+          carrinho = [];
           socket.write("Pedido pago com sucesso!\n");
         } else {
           socket.write("O carrinho está vazio\n");
         }
-
-        socket.write(result);
         break;
 
       case "Solicitar_Entrega":
-        const tempPedido = pedidos.find((pedido) => pedido.idPedido.toString() === params[1]);
+        const tempPedido = pedidos.find((pedido) => pedido.idPedido === Number(params[1]));
         if(tempPedido){
           const tempPedidos = pedidos.map((pedido) => {
-            if(pedido.idPedido.toString() === params[1]){
+            if(pedido.idPedido === Number(params[1])){
               return {...pedido, status: "Entrega solicitada"}
             } else{
               return pedido;
@@ -149,28 +152,31 @@ function connectionListener(socket) {
         break;
 
       case "Listar_Pedidos":
-        let result = "";
+        let result3 = "";
 
         pedidos.forEach((pedido) => {
           let tempProdutos = "";
           let total = 0;
-          pedido.produtos.forEach((produto) => {
+          pedido.produtos.forEach((produto, index) => {
             tempProdutos += 
-              `>Produto: \n${`>>id: ${produto.produto.id} \n>>nome: ${produto.produto.nome} \n>>preço: ${produto.produto.preco}\n`} \n`+
-              `>Quantidade: ${produto.quantidade}\n\n`
+              `>Produto ${index+1}: \n${`>>id: ${produto.produto.id} \n>>nome: ${produto.produto.nome} \n>>preço: ${produto.produto.preco}\n`}`+
+              `>Quantidade: ${produto.quantidade}\n`
             ;
             total += produto.produto.preco*produto.quantidade;
           });
-          result += 
-            `IdPedido: ${pedido.idPedido} \n`+
-            `Produto: \n${tempProdutos}\n`+
-            `Total: ${total}\n\n`
+          result3 += 
+            `IdPedido: ${pedido.idPedido} \n\n`+
+            `Produtos: \n${tempProdutos}\n`+
+            `Total: ${total}\n`+
+            `Status: ${pedido.status}\n\n`
           ;
         });
 
-        result += `Total: ${total} \n`;
+        if(pedidos.length === 0){
+          result2 = "Sem pedidos registrados\n"
+        }
 
-        socket.write(result);
+        socket.write(result3);
         break;
       
       case "Sair":
