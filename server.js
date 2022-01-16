@@ -173,7 +173,7 @@ function connectionListener(socket) {
         });
 
         if(pedidos.length === 0){
-          result2 = "Sem pedidos registrados\n"
+          result3 = "Sem pedidos registrados\n"
         }
 
         socket.write(result3);
