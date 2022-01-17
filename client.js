@@ -26,7 +26,7 @@ const connectionListener = async () => {
                 "\n>>>1 -> para listar os produtos"+
                 "\n>>>2 -> para adicionar produtos no carrinho"+
                 "\n>>>3 -> para remover produtos do carrinho"+
-                "\n>>>4 -> para os produtos no carrinho"+
+                "\n>>>4 -> para listar os produtos no carrinho"+
                 "\n>>>5 -> para pagar os produtos no carrinho"+
                 "\n>>>6 -> para solicitar a entrega de um pedido"+
                 "\n>>>7 -> para listar os pedidos"+
